@@ -1,2 +1,469 @@
-# R0v0Blox
-Upload your script here
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R0v0 Blox - Premium Script Database</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom scrollbar biar estetik */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0b0c; }
+        ::-webkit-scrollbar-thumb { background: #ef4444; border-radius: 4px; box-shadow: 0 0 10px #ef4444; }
+        
+        /* Efek bayangan pencahayaan radial di background */
+        .cyber-glow {
+            position: absolute;
+            top: -10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Efek Shading & Gradasi glow pada Kartu */
+        .premium-card {
+            background: linear-gradient(145deg, #16161a, #0f0f12);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .premium-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(239, 68, 68, 0.4);
+            box-shadow: 0 15px 35px -5px rgba(239, 68, 68, 0.1), 0 0 20px rgba(239, 68, 68, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Shading input glowing */
+        .premium-input {
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+        }
+        .premium-input:focus {
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.25), inset 0 2px 4px rgba(0,0,0,0.4);
+        }
+    </style>
+</head>
+<body class="bg-[#070708] text-gray-200 font-sans antialiased relative overflow-x-hidden">
+
+    <div class="cyber-glow"></div>
+
+    <nav class="bg-[#0e0e11]/80 backdrop-blur-md border-b border-red-900/30 p-4 sticky top-0 z-50 shadow-lg shadow-black/40">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-red-950/40 border border-red-500/30 rounded-lg shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                    <i data-lucide="skull" class="w-6 h-6 text-red-500 animate-pulse"></i>
+                </div>
+                <h1 class="text-2xl font-black tracking-wider text-red-500">R0V0 <span class="text-white text-base font-normal tracking-normal bg-gray-900 px-2 py-0.5 rounded border border-gray-800 ml-1">BLOX</span></h1>
+            </div>
+            
+            <div class="flex items-center space-x-3 md:space-x-4">
+                <div class="relative inline-block text-left">
+                    <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-[#141417] border border-gray-800 text-xs text-gray-300 font-bold py-2 px-2.5 rounded-lg focus:outline-none focus:border-red-500 cursor-pointer transition shadow-md">
+                        <option value="id">🇮🇩 ID</option>
+                        <option value="en">🇺🇸 EN</option>
+                        <option value="es">🇪🇸 ES</option>
+                    </select>
+                </div>
+
+                <button onclick="toggleModal(true)" class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white text-xs md:text-sm font-bold py-2 px-4 rounded-lg transition active:scale-95 flex items-center gap-2 cursor-pointer shadow-lg shadow-red-900/30 border border-red-500/20">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span data-lang="btnUploadNav">Upload Script</span>
+                </button>
+                <div class="text-xs bg-red-950/30 text-red-400 px-3 py-1 rounded-full border border-red-900/40 hidden sm:flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
+                    <span>Team R0vankidd Active</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="max-w-6xl mx-auto mt-16 px-4 text-center relative z-10">
+        <h2 class="text-4xl md:text-6xl font-black text-white tracking-tight mb-3">
+            <span data-lang="heroTitlePre">Pusat Database</span> <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-600 drop-shadow-[0_0_20px_rgba(239,68,68,0.3)]">R0v0 Blox</span>
+        </h2>
+        <p id="heroSub" data-lang="heroSub" class="text-gray-400 text-sm md:text-lg max-w-xl mx-auto font-light leading-relaxed">Cari, publikasikan, dan kelola script terbaik buatanmu di sini.</p>
+        
+        <div class="mt-8 max-w-lg mx-auto relative">
+            <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-500">
+                <i data-lucide="search" class="w-5 h-5"></i>
+            </div>
+            <input type="text" id="searchInput" onkeyup="searchScripts()" placeholder="Cari script di R0v0 Blox (misal: ESP, Teleport)..." class="premium-input w-full bg-[#0e0e11] border border-gray-800/80 focus:border-red-500 focus:outline-none rounded-xl pl-12 pr-4 py-3.5 text-sm text-white placeholder-gray-600 transition duration-300">
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-16 relative z-10">
+        <h3 class="text-xl font-extrabold text-white mb-8 flex items-center gap-2.5 tracking-wide">
+            <i data-lucide="layers" class="w-5 h-5 text-red-500"></i>
+            <span data-lang="listTitle">Daftar Script Terkini</span>
+        </h3>
+        
+        <div id="scriptContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="premium-card script-card border border-gray-800/60 rounded-xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="bg-red-950/60 text-red-400 text-[10px] px-2.5 py-1 rounded-md font-bold uppercase tracking-wider border border-red-900/30 shadow-inner">Combat</span>
+                        <div class="flex items-center gap-1 text-[11px] text-gray-400 bg-gray-900/50 px-2 py-0.5 rounded border border-gray-800">
+                            <i data-lucide="check-check" class="w-3.5 h-3.5 text-green-500"></i>
+                            <span>By R0van</span>
+                        </div>
+                    </div>
+                    <h3 class="script-title text-lg font-bold text-white mb-2 tracking-wide">R0van Gpt Dark FPS Hub</h3>
+                    <p class="script-desc text-xs text-gray-400 mb-6 leading-relaxed" data-id-desc="Fitur brutal: Aimbot, ESP, Speedhack, dan Jumphack dalam satu UI Rayfield." data-en-desc="Brutal features: Aimbot, ESP, Speedhack, and Jumphack in one Rayfield UI." data-es-desc="Funciones brutales: Aimbot, ESP, Speedhack y Jumphack en una sola interfaz de Rayfield.">Fitur brutal: Aimbot, ESP, Speedhack, dan Jumphack dalam satu UI Rayfield.</p>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-1.5 mb-4 bg-[#0a0a0c] p-1 rounded-lg w-fit border border-gray-800/80 shadow-inner">
+                        <button onclick="vote(this, 'like')" class="like-btn flex items-center space-x-1.5 text-xs font-bold text-gray-500 hover:text-green-500 transition px-3 py-1.5 rounded-md cursor-pointer">
+                            <i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i> <span class="like-count">142</span>
+                        </button>
+                        <div class="w-[1px] h-3 bg-gray-800"></div>
+                        <button onclick="vote(this, 'dislike')" class="dislike-btn flex items-center space-x-1.5 text-xs font-bold text-gray-500 hover:text-red-500 transition px-3 py-1.5 rounded-md cursor-pointer">
+                            <i data-lucide="thumbs-down" class="w-3.5 h-3.5"></i> <span class="dislike-count">3</span>
+                        </button>
+                    </div>
+                    <textarea class="hidden">_G.EspEnabled = true; loadstring(game:HttpGet('https://sirius.menu/rayfield'))()</textarea>
+                    <button onclick="copyScript(this)" class="w-full bg-[#16161a] hover:bg-red-600 text-gray-300 hover:text-white border border-gray-800 hover:border-red-500 text-xs font-bold py-2.5 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-md">
+                        <i data-lucide="copy" class="w-4 h-4 btn-icon"></i> <span data-lang="btnCopy">Copy Script</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="premium-card script-card border border-gray-800/60 rounded-xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="bg-blue-950/60 text-blue-400 text-[10px] px-2.5 py-1 rounded-md font-bold uppercase tracking-wider border border-blue-900/30 shadow-inner">Teleport</span>
+                        <div class="flex items-center gap-1 text-[11px] text-gray-400 bg-gray-900/50 px-2 py-0.5 rounded border border-gray-800">
+                            <i data-lucide="check-check" class="w-3.5 h-3.5 text-green-500"></i>
+                            <span>By R0van</span>
+                        </div>
+                    </div>
+                    <h3 class="script-title text-lg font-bold text-white mb-2 tracking-wide">Player Teleport GUI</h3>
+                    <p class="script-desc text-xs text-gray-400 mb-6 leading-relaxed" data-id-desc="Pilih nama target dari list, klik tombolnya, dan langsung meluncur ke lokasinya." data-en-desc="Select the target player name from the list, click the button, and teleport instantly to their location." data-es-desc="Selecciona el nombre del jugador objetivo de la lista, haz clic en el botón y teletranspórtate instantáneamente a su ubicación.">Pilih nama target dari list, klik tombolnya, dan langsung meluncur ke lokasinya.</p>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-1.5 mb-4 bg-[#0a0a0c] p-1 rounded-lg w-fit border border-gray-800/80 shadow-inner">
+                        <button onclick="vote(this, 'like')" class="like-btn flex items-center space-x-1.5 text-xs font-bold text-gray-500 hover:text-green-500 transition px-3 py-1.5 rounded-md cursor-pointer">
+                            <i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i> <span class="like-count font-bold">89</span>
+                        </button>
+                        <div class="w-[1px] h-3 bg-gray-800"></div>
+                        <button onclick="vote(this, 'dislike')" class="dislike-btn flex items-center space-x-1.5 text-xs font-bold text-gray-500 hover:text-red-500 transition px-3 py-1.5 rounded-md cursor-pointer">
+                            <i data-lucide="thumbs-down" class="w-3.5 h-3.5"></i> <span class="dislike-count font-bold">0</span>
+                        </button>
+                    </div>
+                    <textarea class="hidden">loadstring(game:HttpGet('https://raw.githubusercontent.com/r0vankidd/main/tp.lua'))()</textarea>
+                    <button onclick="copyScript(this)" class="w-full bg-[#16161a] hover:bg-red-600 text-gray-300 hover:text-white border border-gray-800 hover:border-red-500 text-xs font-bold py-2.5 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-md">
+                        <i data-lucide="copy" class="w-4 h-4 btn-icon"></i> <span data-lang="btnCopy">Copy Script</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="uploadModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center hidden p-4 transition-all duration-300">
+        <div class="bg-[#0e0e11] border border-gray-800 rounded-2xl w-full max-w-lg p-6 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative border-t-red-500/30">
+            
+            <button onclick="toggleModal(false)" class="absolute top-4 right-4 text-gray-500 hover:text-white p-1 rounded-lg hover:bg-gray-900 transition cursor-pointer">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <h3 class="text-xl font-black text-white mb-6 flex items-center gap-2.5 tracking-wide">
+                <i data-lucide="upload-cloud" class="w-5 h-5 text-red-500"></i>
+                <span data-lang="modalHeader">Upload Script ke R0v0 Blox</span>
+            </h3>
+            
+            <form id="uploadForm" onsubmit="handleUpload(event)" class="space-y-4">
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" data-lang="labelTitle">Judul Script</label>
+                    <input type="text" id="scriptTitle" required placeholder="Contoh: Fly Hack FE" class="premium-input w-full bg-[#141417] border border-gray-800/80 focus:border-red-500 focus:outline-none rounded-xl px-4 py-2.5 text-sm text-white transition">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" data-lang="labelCategory">Kategori</label>
+                        <select id="scriptCategory" class="premium-input w-full bg-[#141417] border border-gray-800/80 focus:border-red-500 focus:outline-none rounded-xl px-4 py-2.5 text-sm text-white transition">
+                            <option value="Combat">Combat</option>
+                            <option value="Teleport">Teleport</option>
+                            <option value="Movement">Movement</option>
+                            <option value="Destroyer">Destroyer</option>
+                            <option value="Misc" data-lang="optMisc">Misc / Lainnya</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" data-lang="labelUploader">Uploader</label>
+                        <input type="text" id="scriptAuthor" placeholder="Nama lu / Team" value="Guest" class="premium-input w-full bg-[#141417] border border-gray-800/80 focus:border-red-500 focus:outline-none rounded-xl px-4 py-2.5 text-sm text-white transition">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" data-lang="labelDesc">Deskripsi Singkat</label>
+                    <textarea id="scriptDesc" required rows="2" placeholder="Jelaskan kegunaan script ini..." class="premium-input w-full bg-[#141417] border border-gray-800/80 focus:border-red-500 focus:outline-none rounded-xl px-4 py-2.5 text-sm text-white resize-none transition"></textarea>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" data-lang="labelCode">Source Code Script (Luau)</label>
+                    <textarea id="scriptCode" required rows="5" placeholder="-- Put Your Script Here" class="premium-input w-full bg-[#141417] border border-gray-800/80 focus:border-red-500 focus:outline-none rounded-xl px-4 py-2.5 font-mono text-xs text-red-400 resize-y transition shadow-inner"></textarea>
+                </div>
+                
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" onclick="toggleModal(false)" class="w-1/3 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-400 font-bold py-2.5 px-4 rounded-xl transition text-sm cursor-pointer" data-lang="btnCancel">
+                        Batal
+                    </button>
+                    <button type="submit" class="w-2/3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-2.5 px-4 rounded-xl transition active:scale-95 text-sm cursor-pointer shadow-lg shadow-red-900/20" data-lang="btnPublish">
+                        🚀 Publish Script
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Database Kamus Bahasa R0v0 Blox
+        const dictionary = {
+            id: {
+                btnUploadNav: "Upload Script",
+                heroTitlePre: "Pusat Database",
+                heroSub: "Cari, publikasikan, dan kelola script terbaik buatanmu di sini.",
+                searchPlaceholder: "Cari script di R0v0 Blox (misal: ESP, Teleport)...",
+                listTitle: "Daftar Script Terkini",
+                btnCopy: "Copy Script",
+                btnCopied: "Berhasil Disalin!",
+                modalHeader: "Upload Script ke R0v0 Blox",
+                labelTitle: "Judul Script",
+                labelCategory: "Kategori",
+                labelUploader: "Uploader",
+                labelDesc: "Deskripsi Singkat",
+                labelCode: "Source Code Script",
+                optMisc: "Misc / Lainnya",
+                btnCancel: "Batal",
+                btnPublish: "🚀 Publish Script",
+                alertSuccess: "Publish Successfully",
+                alertCopyFail: "Autocopy failed"
+            },
+            en: {
+                btnUploadNav: "Upload Script",
+                heroTitlePre: "Database Center",
+                heroSub: "Search, publish, and manage your best scripts here.",
+                searchPlaceholder: "Search scripts on R0v0 Blox (e.g., ESP, Teleport)...",
+                listTitle: "Recent Scripts",
+                btnCopy: "Copy Script",
+                btnCopied: "Copied to Clipboard!",
+                modalHeader: "Upload Script to R0v0 Blox",
+                labelTitle: "Script Title",
+                labelCategory: "Category",
+                labelUploader: "Uploader",
+                labelDesc: "Short Description",
+                labelCode: "Source Code Script (Luau)",
+                optMisc: "Misc / Others",
+                btnCancel: "Cancel",
+                btnPublish: "🚀 Publish Script",
+                alertSuccess: "Success Master! Script successfully published!",
+                alertCopyFail: "Failed to copy automatically, Master!"
+            },
+            es: {
+                btnUploadNav: "Subir Script",
+                heroTitlePre: "Centro de Base de Datos",
+                heroSub: "Busca, publica y administra tus mejores scripts aquí.",
+                searchPlaceholder: "Buscar scripts en R0v0 Blox (ej., ESP, Teleport)...",
+                listTitle: "Scripts Recientes",
+                btnCopy: "Copiar Script",
+                btnCopied: "¡Copiado!",
+                modalHeader: "Subir Script a R0v0 Blox",
+                labelTitle: "Título del Script",
+                labelCategory: "Categoría",
+                labelUploader: "Subido por",
+                labelDesc: "Descripción Corta",
+                labelCode: "Código Fuente del Script (Luau)",
+                optMisc: "Misc / Otros",
+                btnCancel: "Cancelar",
+                btnPublish: "🚀 Publicar Script",
+                alertSuccess: "¡Éxito Maestro! ¡Script publicado correctamente!",
+                alertCopyFail: "¡Error al copiar automáticamente, Maestro!"
+            }
+        };
+
+        let currentLang = 'id';
+
+        // Fungsi Inti Ganti Bahasa
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+
+            document.querySelectorAll('[data-lang]').forEach(elem => {
+                const key = elem.getAttribute('data-lang');
+                if (dictionary[lang][key]) {
+                    elem.innerText = dictionary[lang][key];
+                }
+            });
+
+            document.getElementById('searchInput').placeholder = dictionary[lang].searchPlaceholder;
+
+            document.querySelectorAll('.script-desc').forEach(desc => {
+                const txt = desc.getAttribute(`data-${lang}-desc`);
+                if (txt) desc.innerText = txt;
+            });
+
+            document.querySelectorAll('.script-card button').forEach(btn => {
+                const textSpan = btn.querySelector('span');
+                if (textSpan) {
+                    textSpan.innerText = dictionary[lang].btnCopy;
+                }
+            });
+        }
+
+        // Buka/Tutup Modal Pop-up
+        function toggleModal(show) {
+            const modal = document.getElementById('uploadModal');
+            if (show) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+                document.getElementById('uploadForm').reset();
+            }
+        }
+
+        // Handle submit script baru
+        function handleUpload(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('scriptTitle').value;
+            const category = document.getElementById('scriptCategory').value;
+            const author = document.getElementById('scriptAuthor').value || "Guest";
+            const desc = document.getElementById('scriptDesc').value;
+            const code = document.getElementById('scriptCode').value;
+
+            let tagColorClass = "bg-gray-800 text-gray-400 border-gray-700";
+            if (category === "Combat") tagColorClass = "bg-red-950/60 text-red-400 border-red-900/30";
+            else if (category === "Teleport") tagColorClass = "bg-blue-950/60 text-blue-400 border-blue-900/30";
+            else if (category === "Movement") tagColorClass = "bg-green-950/60 text-green-400 border-green-900/30";
+            else if (category === "Destroyer") tagColorClass = "bg-purple-950/60 text-purple-400 border-purple-900/30";
+
+            const container = document.getElementById('scriptContainer');
+            const newCard = document.createElement('div');
+            newCard.className = "premium-card script-card border border-gray-800/60 rounded-xl p-6 flex flex-col justify-between";
+            
+            newCard.innerHTML = `
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="${tagColorClass} text-[10px] px-2.5 py-1 rounded-md font-bold uppercase tracking-wider border shadow-inner">${category}</span>
+                        <div class="flex items-center gap-1 text-[11px] text-red-400 bg-red-950/20 px-2 py-0.5 rounded border border-red-900/30">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 text-red-500 animate-pulse"></i>
+                            <span>By ${author}</span>
+                        </div>
+                    </div>
+                    <h3 class="script-title text-lg font-bold text-white mb-2 tracking-wide">${title}</h3>
+                    <p class="script-desc text-xs text-gray-400 mb-6 leading-relaxed" data-id-desc="${desc}" data-en-desc="${desc}" data-es-desc="${desc}">${desc}</p>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-1.5 mb-4 bg-[#0a0a0c] p-1 rounded-lg w-fit border border-gray-800/80 shadow-inner">
+                        <button onclick="vote(this, 'like')" class="like-btn flex items-center space-x-1.5 text-xs font-bold text-gray-500 hover:text-green-500 transition px-3 py-1.5 rounded-md cursor-pointer">
+                            <i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i> <span class="like-count">0</span>
+                        </button>
+                        <div class="w-[1px] h-3 bg-gray-800"></div>
+                        <button onclick="vote(this, 'dislike')" class="dislike-btn flex items-center space-x-1.5 text-xs font-bold text-gray-500 hover:text-red-500 transition px-3 py-1.5 rounded-md cursor-pointer">
+                            <i data-lucide="thumbs-down" class="w-3.5 h-3.5"></i> <span class="dislike-count">0</span>
+                        </button>
+                    </div>
+                    <textarea class="hidden">${code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</textarea>
+                    <button onclick="copyScript(this)" class="w-full bg-[#16161a] hover:bg-red-600 text-gray-300 hover:text-white border border-gray-800 hover:border-red-500 text-xs font-bold py-2.5 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-md">
+                        <i data-lucide="copy" class="w-4 h-4 btn-icon"></i> <span>${dictionary[currentLang].btnCopy}</span>
+                    </button>
+                </div>
+            `;
+
+            container.insertBefore(newCard, container.firstChild);
+            lucide.createIcons(); // Re-render ikon Lucide untuk kartu baru
+            toggleModal(false);
+            alert(dictionary[currentLang].alertSuccess);
+        }
+
+        // Logika Vote Like & Dislike
+        function vote(button, type) {
+            const parent = button.parentElement;
+            const likeBtn = parent.querySelector('.like-btn');
+            const dislikeBtn = parent.querySelector('.dislike-btn');
+            const likeCount = likeBtn.querySelector('.like-count');
+            const dislikeCount = dislikeBtn.querySelector('.dislike-count');
+
+            let likes = parseInt(likeCount.innerText);
+            let dislikes = parseInt(dislikeCount.innerText);
+
+            if (type === 'like') {
+                if (likeBtn.classList.contains('text-green-500')) {
+                    likeBtn.classList.remove('text-green-500', 'bg-green-950/30');
+                    likeBtn.classList.add('text-gray-400');
+                    likeCount.innerText = likes - 1;
+                } else {
+                    likeBtn.classList.add('text-green-500', 'bg-green-950/30');
+                    likeBtn.classList.remove('text-gray-400');
+                    likeCount.innerText = likes + 1;
+                    if (dislikeBtn.classList.contains('text-red-500')) {
+                        dislikeBtn.classList.remove('text-red-500', 'bg-red-950/30');
+                        dislikeBtn.classList.add('text-gray-400');
+                        dislikeCount.innerText = dislikes - 1;
+                    }
+                }
+            } else if (type === 'dislike') {
+                if (dislikeBtn.classList.contains('text-red-500')) {
+                    dislikeBtn.classList.remove('text-red-500', 'bg-red-950/30');
+                    dislikeBtn.classList.add('text-gray-400');
+                    dislikeCount.innerText = dislikes - 1;
+                } else {
+                    dislikeBtn.classList.add('text-red-500', 'bg-red-950/30');
+                    dislikeBtn.classList.remove('text-gray-400');
+                    dislikeCount.innerText = dislikes + 1;
+                    if (likeBtn.classList.contains('text-green-500')) {
+                        likeBtn.classList.remove('text-green-500', 'bg-green-950/30');
+                        likeBtn.classList.add('text-gray-400');
+                        likeCount.innerText = likes - 1;
+                    }
+                }
+            }
+        }
+
+        // Fungsi Copy Script otomatis
+        function copyScript(button) {
+            const container = button.parentElement;
+            const textarea = container.querySelector('textarea');
+            const icon = button.querySelector('.btn-icon');
+            const textSpan = button.querySelector('span');
+            
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                textSpan.innerText = dictionary[currentLang].btnCopied;
+                button.classList.remove('bg-[#16161a]', 'hover:bg-red-600', 'text-gray-300', 'border-gray-800');
+                button.classList.add('bg-green-600', 'text-white', 'border-green-500');
+                if(icon) icon.setAttribute('data-lucide', 'check');
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    textSpan.innerText = dictionary[currentLang].btnCopy;
+                    button.classList.remove('bg-green-600', 'text-white', 'border-green-500');
+                    button.classList.add('bg-[#16161a]', 'hover:bg-red-600', 'text-gray-300', 'border-gray-800');
+                    if(icon) icon.setAttribute('data-lucide', 'copy');
+                    lucide.createIcons();
+                }, 2000);
+            }).catch(err => {
+                alert(dictionary[currentLang].alertCopyFail);
+            });
+        }
+
+        // Live Search
+        function searchScripts() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.getElementsByClassName('script-card');
+            
+            for (let i = 0; i < cards.length; i++) {
+                const title = cards[i].querySelector('.script-title').innerText.toLowerCase();
+                if (title.includes(input)) {
+                    cards[i].style.display = "flex";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+
+        // Inisialisasi awal ikon Lucide saat halaman dimuat
+        lucide.createIcons();
+    </script>
+</body>
+</html>
